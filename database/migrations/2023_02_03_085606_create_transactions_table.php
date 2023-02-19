@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('approved');
             $table->string('confirmed');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
