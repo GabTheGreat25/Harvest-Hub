@@ -9,7 +9,7 @@ class TransactionLine extends Model
 {
     use HasFactory;
 
-    public $primarykey = 'id';
+    public $primaryKey = 'id';
 
     protected $fillable = [
         'product_id',

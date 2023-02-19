@@ -9,7 +9,7 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    public $primarykey = 'id';
+    public $primaryKey = 'id';
 
     protected $fillable = [
         'customer',
