@@ -14,7 +14,7 @@ class CartLineController extends Controller
     {
 
         return response()->json([
-            'data' => CartLine::with(["product", "cart"])->get(),
+            'data' => CartLine::with(["product", "cart"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get cart line success',
         ]);
@@ -29,13 +29,13 @@ class CartLineController extends Controller
             'quantity' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
 
@@ -71,13 +71,13 @@ class CartLineController extends Controller
             'quantity' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
             $data = CartLine::find($id);
@@ -94,7 +94,7 @@ class CartLineController extends Controller
             $data->cart_id = $request->get('cart_id');
             $data->quantity = $request->get('quantity');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -116,15 +116,6 @@ class CartLineController extends Controller
 
     public function show($id)
     {
-        return response()->json([
-            'data' => [CartLine::with(["product", "cart"])->find($id)],
-            'status' => 'success',
-            'message' => 'Get cart line success',
-        ]);
-    }
-
-    public function destroy($id)
-    {
         $data = CartLine::find($id);
 
         if ($data == null) {
@@ -134,12 +125,71 @@ class CartLineController extends Controller
                 'message' => 'cart line not found',
             ]);
         }
+
+        return response()->json([
+            'data' => [CartLine::with(["product", "cart"])->find($id)],
+            'status' => 'success',
+            'message' => 'Get cart line success',
+        ]);
+    }
+
+     public function destroy($id)
+    {
+        $data = CartLine::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'CartLine not found ',
+            ]);
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete cart line success',
+            'message' => 'Soft delete CartLine success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = CartLine::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'CartLine not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore CartLine success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = CartLine::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'CartLine not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete CartLine success',
         ]);
     }
 }

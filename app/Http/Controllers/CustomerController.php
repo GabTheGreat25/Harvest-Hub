@@ -14,7 +14,7 @@ class CustomerController extends Controller
     {
 
         return response()->json([
-            'data' => Customer::with(["user"])->get(),
+            'data' => Customer::with(["user"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get customer success',
         ]);
@@ -27,13 +27,13 @@ class CustomerController extends Controller
             'user_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+    
         try {
             DB::beginTransaction();
 
@@ -65,28 +65,28 @@ class CustomerController extends Controller
             'user_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
             $data = Customer::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Customer not found',
                 ]);
-            }
+            
 
             $data->user_id = $request->get('user_id');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -108,15 +108,6 @@ class CustomerController extends Controller
 
     public function show($id)
     {
-        return response()->json([
-            'data' => [Customer::with(["user"])->find($id)],
-            'status' => 'success',
-            'message' => 'Get customer success',
-        ]);
-    }
-
-    public function destroy($id)
-    {
         $data = Customer::find($id);
 
         if ($data == null) {
@@ -126,12 +117,71 @@ class CustomerController extends Controller
                 'message' => 'Customer not found',
             ]);
         }
+
+        return response()->json([
+            'data' => [Customer::with(["user"])->find($id)],
+            'status' => 'success',
+            'message' => 'Get customer success',
+        ]);
+    }
+
+     public function destroy($id)
+    {
+        $data = Customer::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Customer not found ',
+            ]);
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete customer success',
+            'message' => 'Soft delete Customer success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = Customer::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Customer not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Customer success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = Customer::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Customer not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Customer success',
         ]);
     }
 }

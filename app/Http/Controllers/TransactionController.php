@@ -13,7 +13,7 @@ class TransactionController extends Controller
     public function index()
     {
         return response()->json([
-            'data' => Transaction::with([])->get(),
+            'data' => Transaction::with([])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get transaction success',
         ]);
@@ -27,13 +27,12 @@ class TransactionController extends Controller
             'confirmed' => 'required|string'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
 
         try {
             DB::beginTransaction();
@@ -73,31 +72,29 @@ class TransactionController extends Controller
             'confirmed' => 'required|string'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
 
         try {
             DB::beginTransaction();
             $data = Transaction::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Transaction not found',
                 ]);
-            }
 
             $data->customer = $request->get('customer');
             $data->approved = $request->get('approved');
             $data->confirmed = $request->get('confirmed');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -119,6 +116,15 @@ class TransactionController extends Controller
 
     public function show($id)
     {
+        $data = Transaction::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Transaction not found',
+            ]);
+
         return response()->json([
             'data' => [Transaction::with([])->find($id)],
             'status' => 'success',
@@ -126,23 +132,63 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
         $data = Transaction::find($id);
 
-        if ($data == null) {
+        if ($data == null) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
-                'message' => 'Transaction not found',
+                'message' => 'Transaction not found ',
             ]);
-        }
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete transaction success',
+            'message' => 'Soft delete Transaction success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = Transaction::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Transaction not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Transaction success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = Transaction::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Transaction not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Transaction success',
         ]);
     }
 }

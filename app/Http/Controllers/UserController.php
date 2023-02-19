@@ -13,7 +13,7 @@ class UserController extends Controller
     public function index()
     {
         return response()->json([
-            'data' => User::with([])->get(),
+            'data' => User::with([])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get user success',
         ]);
@@ -28,13 +28,13 @@ class UserController extends Controller
             'last_name' => 'required|string'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
 
         try {
             DB::beginTransaction();
@@ -75,31 +75,31 @@ class UserController extends Controller
             'last_name' => 'required|string'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
 
         try {
             DB::beginTransaction();
             $data = User::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'User not found',
                 ]);
-            }
+            
 
             $data->email = $request->get('email');
             $data->first_name = $request->get('first_name');
             $data->last_name = $request->get('last_name');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -121,6 +121,15 @@ class UserController extends Controller
 
     public function show($id)
     {
+        $data = User::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'User not found ',
+            ]);
+
         return response()->json([
             'data' => [User::with([])->find($id)],
             'status' => 'success',
@@ -128,23 +137,63 @@ class UserController extends Controller
         ]);
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
         $data = User::find($id);
 
-        if ($data == null) {
+        if ($data == null) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
-                'message' => 'User not found',
+                'message' => 'User not found ',
             ]);
-        }
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete user success',
+            'message' => 'Soft delete user success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = User::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'User not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore user success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = User::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'User not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete user success',
         ]);
     }
 }

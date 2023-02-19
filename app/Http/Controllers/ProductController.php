@@ -13,7 +13,7 @@ class ProductController extends Controller
     public function index()
     {
         return response()->json([
-            'data' => Product::with(["farmer"])->get(),
+            'data' => Product::with(["farmer"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get product success',
         ]);
@@ -28,13 +28,12 @@ class ProductController extends Controller
             'price' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
 
         try {
             DB::beginTransaction();
@@ -76,32 +75,30 @@ class ProductController extends Controller
             'price' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
 
         try {
             DB::beginTransaction();
             $data = Product::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Product not found',
                 ]);
-            }
 
             $data->farmer_id = $request->get('farmer_id');
             $data->name = $request->get('name');
             $data->description = $request->get('description');
             $data->price = $request->get('price');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -123,6 +120,15 @@ class ProductController extends Controller
 
     public function show($id)
     {
+        $data = Product::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Product not found',
+            ]);
+        
         return response()->json([
             'data' => [Product::with(["farmer"])->find($id)],
             'status' => 'success',
@@ -130,23 +136,63 @@ class ProductController extends Controller
         ]);
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
         $data = Product::find($id);
 
-        if ($data == null) {
+        if ($data == null) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
-                'message' => 'Product not found',
+                'message' => 'Product not found ',
             ]);
-        }
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete product success',
+            'message' => 'Soft delete Product success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = Product::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Product not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Product success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = Product::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Product not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Product success',
         ]);
     }
 }

@@ -14,7 +14,7 @@ class FarmerController extends Controller
     {
 
         return response()->json([
-            'data' => Farmer::with(["user"])->get(),
+            'data' => Farmer::with(["user"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get farmer success',
         ]);
@@ -27,13 +27,13 @@ class FarmerController extends Controller
             'user_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+
         try {
             DB::beginTransaction();
 
@@ -65,28 +65,28 @@ class FarmerController extends Controller
             'user_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+
         try {
             DB::beginTransaction();
             $data = Farmer::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Farmer not found',
                 ]);
-            }
+            
 
             $data->user_id = $request->get('user_id');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -108,6 +108,15 @@ class FarmerController extends Controller
 
     public function show($id)
     {
+        $data = Farmer::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Farmer not found',
+            ]);
+
         return response()->json([
             'data' => [Farmer::with(["user"])->find($id)],
             'status' => 'success',
@@ -115,23 +124,63 @@ class FarmerController extends Controller
         ]);
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
         $data = Farmer::find($id);
 
-        if ($data == null) {
+        if ($data == null) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
-                'message' => 'Farmer not found',
+                'message' => 'Farmer not found ',
             ]);
-        }
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete farmer success',
+            'message' => 'Soft delete Farmer success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = Farmer::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Farmer not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Farmer success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = Farmer::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Farmer not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Farmer success',
         ]);
     }
 }

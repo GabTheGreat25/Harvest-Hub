@@ -14,7 +14,7 @@ class TransactionLineController extends Controller
     {
 
         return response()->json([
-            'data' => TransactionLine::with(["product", "transaction"])->get(),
+            'data' => TransactionLine::with(["product", "transaction"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get transaction line success',
         ]);
@@ -29,13 +29,13 @@ class TransactionLineController extends Controller
             'quantity' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
 
@@ -71,30 +71,30 @@ class TransactionLineController extends Controller
             'quantity' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
             $data = TransactionLine::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Transaction line not found',
                 ]);
-            }
+            
 
             $data->product_id = $request->get('product_id');
             $data->transaction_id = $request->get('transaction_id');
             $data->quantity = $request->get('quantity');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -116,15 +116,6 @@ class TransactionLineController extends Controller
 
     public function show($id)
     {
-        return response()->json([
-            'data' => [TransactionLine::with(["product", "transaction"])->find($id)],
-            'status' => 'success',
-            'message' => 'Get transaction line success',
-        ]);
-    }
-
-    public function destroy($id)
-    {
         $data = TransactionLine::find($id);
 
         if ($data == null) {
@@ -134,12 +125,71 @@ class TransactionLineController extends Controller
                 'message' => 'Transaction line not found',
             ]);
         }
+
+        return response()->json([
+            'data' => [TransactionLine::with(["product", "transaction"])->find($id)],
+            'status' => 'success',
+            'message' => 'Get transaction line success',
+        ]);
+    }
+
+     public function destroy($id)
+    {
+        $data = TransactionLine::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Transaction Line not found ',
+            ]);
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete transaction line success',
+            'message' => 'Soft delete Transaction Line success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = TransactionLine::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Transaction Line not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Transaction Line success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = TransactionLine::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Transaction Line not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Transaction Line success',
         ]);
     }
 }

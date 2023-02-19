@@ -14,7 +14,7 @@ class CartController extends Controller
     {
 
         return response()->json([
-            'data' => Cart::with(["customer"])->get(),
+            'data' => Cart::with(["customer"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get cart success',
         ]);
@@ -27,13 +27,13 @@ class CartController extends Controller
             'customer_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
 
@@ -65,28 +65,28 @@ class CartController extends Controller
             'customer_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
             $data = Cart::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Cart not found',
                 ]);
-            }
+            
 
             $data->customer_id = $request->get('customer_id');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -108,15 +108,6 @@ class CartController extends Controller
 
     public function show($id)
     {
-        return response()->json([
-            'data' => [Cart::with(["customer"])->find($id)],
-            'status' => 'success',
-            'message' => 'Get cart success',
-        ]);
-    }
-
-    public function destroy($id)
-    {
         $data = Cart::find($id);
 
         if ($data == null) {
@@ -126,12 +117,71 @@ class CartController extends Controller
                 'message' => 'Cart not found',
             ]);
         }
+
+        return response()->json([
+            'data' => [Cart::with(["customer"])->find($id)],
+            'status' => 'success',
+            'message' => 'Get cart success',
+        ]);
+    }
+
+     public function destroy($id)
+    {
+        $data = Cart::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Cart not found ',
+            ]);
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete cart success',
+            'message' => 'Soft delete Cart success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = Cart::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Cart not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Cart success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = Cart::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Cart not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Cart success',
         ]);
     }
 }

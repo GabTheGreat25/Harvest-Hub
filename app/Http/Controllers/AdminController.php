@@ -14,7 +14,7 @@ class AdminController extends Controller
     {
 
         return response()->json([
-            'data' => Admin::with(["user"])->get(),
+            'data' => Admin::with(["user"])->withTrashed()->get(),
             'status' => 'success',
             'message' => 'Get admin success',
         ]);
@@ -27,13 +27,13 @@ class AdminController extends Controller
             'user_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
 
@@ -65,28 +65,27 @@ class AdminController extends Controller
             'user_id' => 'required|numeric'
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails()) 
             return response()->json([
                 'data' => [],
                 'status' => 'failed',
                 'message' => 'The form is not valid',
             ]);
-        }
+        
         try {
             DB::beginTransaction();
             $data = Admin::find($id);
 
-            if ($data == null) {
+            if ($data == null) 
                 return response()->json([
                     'data' => [],
                     'status' => 'failed',
                     'message' => 'Admin not found',
                 ]);
-            }
 
             $data->user_id = $request->get('user_id');
 
-            $data->save();
+            $data->update();
             DB::commit();
         } catch (\Exception $e) {
 
@@ -108,15 +107,6 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        return response()->json([
-            'data' => [Admin::with(["user"])->find($id)],
-            'status' => 'success',
-            'message' => 'Get admin success',
-        ]);
-    }
-
-    public function destroy($id)
-    {
         $data = Admin::find($id);
 
         if ($data == null) {
@@ -126,12 +116,71 @@ class AdminController extends Controller
                 'message' => 'Admin not found',
             ]);
         }
+        
+        return response()->json([
+            'data' => [Admin::with(["user"])->find($id)],
+            'status' => 'success',
+            'message' => 'Get admin success',
+        ]);
+    }
+
+     public function destroy($id)
+    {
+        $data = Admin::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Admin not found ',
+            ]);
+        
         $data->delete();
 
         return response()->json([
             'data' => [],
             'status' => 'success',
-            'message' => 'Delete admin success',
+            'message' => 'Soft delete Admin success',
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $data = Admin::onlyTrashed()->find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Admin not found',
+            ]);
+        
+        $data->restore();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Restore Admin success',
+        ]);
+    }
+
+    public function forceDelete($id)
+    {
+        $data = Admin::find($id);
+
+        if ($data == null) 
+            return response()->json([
+                'data' => [],
+                'status' => 'failed',
+                'message' => 'Admin not found',
+            ]);
+        
+        $data->forceDelete();
+
+        return response()->json([
+            'data' => [],
+            'status' => 'success',
+            'message' => 'Permanently delete Admin success',
         ]);
     }
 }
