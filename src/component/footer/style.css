@@ -1,0 +1,3 @@
+.footer {
+  @apply tw-fixed tw-bottom-0 tw-w-full;
+}
