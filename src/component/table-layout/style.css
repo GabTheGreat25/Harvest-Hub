@@ -1,8 +1,0 @@
-.table-container {
-  display: grid;
-  grid-template-columns: 15% auto 10%;
-}
-
-.table-container > div:nth-child(2) {
-  margin-top: 5rem;
-}
