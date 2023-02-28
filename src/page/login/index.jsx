@@ -13,7 +13,6 @@ import {
 import { Box } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import loginImg from "@/assets/login.png";
-import { Title } from "@/component";
 
 function Login() {
   const navigate = useNavigate();
@@ -150,7 +149,9 @@ function Login() {
                 width: "100%",
               }}
             >
-              <Title title="Not a member" />
+              <Typography variant="h4" gutterBottom>
+                Not a member
+              </Typography>
               <Button
                 type="button"
                 onClick={handleRegister}
