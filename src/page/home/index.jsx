@@ -12,7 +12,6 @@ import {
   Button,
 } from "@mui/material";
 import { Delete, Edit, Save } from "@mui/icons-material";
-import { TableLayout } from "@/component";
 
 function CrudTable() {
   const [data, setData] = useState([
@@ -20,7 +19,6 @@ function CrudTable() {
       id: 1,
       name: "John Doe",
       email: "johndoe@example.com",
-      name: "John Doe",
       type: "Admin",
     },
     {
@@ -39,7 +37,6 @@ function CrudTable() {
       id: 4,
       name: "John Doe",
       email: "johndoe@example.com",
-      name: "John Doe",
       type: "Farmer",
     },
     {
@@ -96,7 +93,7 @@ function CrudTable() {
   };
 
   return (
-    <TableLayout>
+    <>
       <Button
         sx={{
           marginBottom: 2,
@@ -174,7 +171,7 @@ function CrudTable() {
           </Table>
         </TableContainer>
       </div>
-    </TableLayout>
+    </>
   );
 }
 
