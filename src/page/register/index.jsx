@@ -10,7 +10,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { Title, Description } from "@/component";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import RegisterImg from "@/assets/register.png";
 
@@ -62,10 +61,9 @@ function Register() {
           <Typography variant="h4" align="center" gutterBottom>
             Sign Up
           </Typography>
-          <Description
-            description="Get us some of your information to get a free access to our
-                   website."
-          />
+          <Typography variant="h5" align="center">
+            Get us some of your information to get a free access to our website.
+          </Typography>
           <form onSubmit={handleSubmit} sx={{ height: "100%" }}>
             <TextField
               margin="normal"
@@ -157,7 +155,9 @@ function Register() {
               mt: 1,
             }}
           >
-            <Title title="Already Have An Account?" />
+            <Typography variant="h5" align="center" gutterBottom>
+              Already Have An Account?
+            </Typography>
             <Button
               type="button"
               onClick={handleLogin}
