@@ -10,7 +10,14 @@ import Sidenav from "./Sidenav";
 const mdTheme = createTheme();
 
 function DashboardLayout(props) {
-  const { children } = props;
+  const {
+    children,
+    links = [
+      { title: "Users", link: "/dashboard/users" },
+      { title: "Customers", link: "/dashboard/customers" },
+      { title: "Farmers", link: "/dashboard/farmers" },
+    ],
+  } = props;
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggleDrawer = () => {
@@ -23,7 +30,7 @@ function DashboardLayout(props) {
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
           <Navbar open={isOpen} toggleDrawer={toggleDrawer}></Navbar>
-          <Sidenav open={isOpen} toggleDrawer={toggleDrawer}></Sidenav>
+          <Sidenav open={isOpen} toggleDrawer={toggleDrawer} links={links} />
           <Box
             component="main"
             sx={{
