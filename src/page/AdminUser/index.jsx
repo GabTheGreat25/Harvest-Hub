@@ -1,10 +1,13 @@
 import * as React from "react";
 import { DashboardLayout, Datatable } from "@/component";
 import Button from "@mui/material/Button";
+import { useGetUsersQuery } from "@/state/api/reducer";
 
 function AdminUser() {
-  const headers = ["ID", "First Name", "Last Name", "Email", "Type"];
-  const keys = ["_id", "firstName", "lastName", "email", "type"];
+  const { data = {}, isLoading } = useGetUsersQuery();
+  const headers = ["ID", "First Name", "Last Name", "Email"];
+  const keys = ["id", "first_name", "last_name", "email"];
+
   const actions = [
     {
       onClick: (_id) => {},
@@ -13,43 +16,7 @@ function AdminUser() {
     { onClick: (_id) => {}, title: "Delete" },
   ];
 
-  const data = [
-    {
-      _id: "_id",
-      firstName: "firstName",
-      lastName: "lastName",
-      email: "email",
-      type: "type",
-    },
-    {
-      _id: "_id",
-      firstName: "firstName",
-      lastName: "lastName",
-      email: "email",
-      type: "type",
-    },
-    {
-      _id: "_id",
-      firstName: "firstName",
-      lastName: "lastName",
-      email: "email",
-      type: "type",
-    },
-    {
-      _id: "_id",
-      firstName: "firstName",
-      lastName: "lastName",
-      email: "email",
-      type: "type",
-    },
-    {
-      _id: "_id",
-      firstName: "firstName",
-      lastName: "lastName",
-      email: "email",
-      type: "type",
-    },
-  ];
+  if (isLoading) return <></>;
 
   return (
     <>
@@ -60,7 +27,7 @@ function AdminUser() {
           keys={keys}
           actions={actions}
           hasActions={true}
-          data={data}
+          data={data.data}
         />
       </DashboardLayout>
     </>
