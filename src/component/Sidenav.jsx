@@ -7,6 +7,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MuiDrawer from "@mui/material/Drawer";
 import { COMPONENTS } from "../constants";
 import ListItem from "./ListItem";
+import { generateKey } from "../services/generateKey";
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -35,7 +36,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 function Sidenav(props) {
-  const { open, toggleDrawer } = props;
+  const { open, toggleDrawer, links = [] } = props;
   return (
     <>
       <Drawer variant="permanent" open={open}>
@@ -53,8 +54,14 @@ function Sidenav(props) {
         </Toolbar>
         <Divider />
         <List component="nav">
-          <ListItem title="asd"></ListItem>
-          <Divider sx={{ my: 1 }} />
+          {links.map((e) => {
+            return (
+              <div key={generateKey(5)}>
+                <ListItem title={e.title} link={e.link} />
+                <Divider sx={{ my: 1 }} />
+              </div>
+            );
+          })}
         </List>
       </Drawer>
     </>
