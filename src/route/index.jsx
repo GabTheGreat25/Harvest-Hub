@@ -1,5 +1,13 @@
 import { useRoutes, Navigate } from "react-router-dom";
-import { Home, Login, Register } from "@/page";
+import {
+  Home,
+  Login,
+  Register,
+  Admin,
+  AdminUser,
+  AdminCustomer,
+  AdminFarmer,
+} from "@/page";
 
 export function Router() {
   return useRoutes([
@@ -18,6 +26,22 @@ export function Router() {
     {
       path: "/home",
       element: <Home />,
+    },
+    {
+      path: "/dashboard",
+      element: <Admin />,
+    },
+    {
+      path: "/dashboard/users",
+      element: <AdminUser />,
+    },
+    {
+      path: "/dashboard/customers",
+      element: <AdminCustomer />,
+    },
+    {
+      path: "/dashboard/farmers",
+      element: <AdminFarmer />,
     },
   ]);
 }
