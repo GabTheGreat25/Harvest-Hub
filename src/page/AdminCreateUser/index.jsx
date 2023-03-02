@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DashboardLayout } from "@/component";
+import { DashboardLayout, Breadcrumb } from "@/component";
 import {
   MenuItem,
   TextField,
@@ -13,6 +13,7 @@ function AdminCreateUser() {
   return (
     <>
       <DashboardLayout>
+        <Breadcrumb />
         <Typography variant="h6" gutterBottom>
           Create User
         </Typography>
