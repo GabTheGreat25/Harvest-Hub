@@ -3,5 +3,6 @@ import Sidenav from "./Sidenav";
 import DashboardLayout from "./DashboardLayout";
 import ListItem from "./ListItem";
 import Datatable from "./Datatable";
+import Breadcrumb from "./Breadcrumb";
 
-export { Datatable, Navbar, Sidenav, DashboardLayout, ListItem };
+export { Breadcrumb, Datatable, Navbar, Sidenav, DashboardLayout, ListItem };
