@@ -7,6 +7,7 @@ import {
   AdminUser,
   AdminCustomer,
   AdminFarmer,
+  AdminCreateUser,
 } from "@/page";
 
 export function Router() {
@@ -42,6 +43,10 @@ export function Router() {
     {
       path: "/dashboard/farmers",
       element: <AdminFarmer />,
+    },
+    {
+      path: "/dashboard/users/create",
+      element: <AdminCreateUser />,
     },
   ]);
 }
