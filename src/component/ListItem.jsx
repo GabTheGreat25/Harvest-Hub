@@ -12,16 +12,15 @@ function ListItem(props) {
 
   return (
     <>
-      <ListItemButton>
+      <ListItemButton
+        onClick={() => {
+          navigate(link);
+        }}
+      >
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
-        <ListItemText
-          primary={title}
-          onClick={() => {
-            navigate(link);
-          }}
-        />
+        <ListItemText primary={title} />
       </ListItemButton>
     </>
   );
