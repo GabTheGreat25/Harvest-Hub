@@ -12,6 +12,7 @@ import {
 import { Box } from "@mui/system";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import RegisterImg from "@/assets/register.png";
+import "./style.css";
 
 function Register() {
   const navigate = useNavigate();
@@ -145,7 +146,16 @@ function Register() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              {
+                <span
+                  style={{
+                    textTransform: "capitalize",
+                    fontSize: "1.15rem",
+                  }}
+                >
+                  Sign Up
+                </span>
+              }
             </Button>
           </form>
           <Box
@@ -155,7 +165,14 @@ function Register() {
               mt: 1,
             }}
           >
-            <Typography variant="h5" align="center" gutterBottom>
+            <Typography
+              variant="h6"
+              align="center"
+              gutterBottom
+              sx={{
+                mt: 1,
+              }}
+            >
               Already Have An Account?
             </Typography>
             <Button
@@ -165,7 +182,16 @@ function Register() {
               color="secondary"
               sx={{ ml: 2 }}
             >
-              Click here
+              {
+                <span
+                  style={{
+                    textTransform: "capitalize",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  Register Here
+                </span>
+              }
             </Button>
           </Box>
         </Box>

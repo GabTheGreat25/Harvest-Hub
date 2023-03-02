@@ -129,7 +129,17 @@ function Login() {
                 color="error"
                 sx={{ alignSelf: "flex-start" }}
               >
-                Forgot Password
+                {
+                  <span
+                    style={{
+                      textTransform: "capitalize",
+                      fontSize: "1.15rem",
+                      marginBottom: ".25rem",
+                    }}
+                  >
+                    Forgot Password
+                  </span>
+                }
               </Button>
             </Box>
             <Button
@@ -138,7 +148,16 @@ function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Log In
+              {
+                <span
+                  style={{
+                    textTransform: "capitalize",
+                    fontSize: "1.15rem",
+                  }}
+                >
+                  Log In
+                </span>
+              }
             </Button>
             <Box
               sx={{
@@ -149,17 +168,27 @@ function Login() {
                 width: "100%",
               }}
             >
-              <Typography variant="h4" gutterBottom>
+              <Typography variant="h6" gutterBottom>
                 Not a member
               </Typography>
+
               <Button
                 type="button"
                 onClick={handleRegister}
                 variant="text"
                 color="success"
-                sx={{ ml: 2 }}
               >
-                Register Here
+                {
+                  <span
+                    style={{
+                      textTransform: "capitalize",
+                      fontSize: "1.15rem",
+                      marginBottom: ".25rem",
+                    }}
+                  >
+                    Register Here
+                  </span>
+                }
               </Button>
             </Box>
           </Box>
